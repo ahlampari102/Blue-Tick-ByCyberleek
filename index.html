@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Almost there…</title>
+<style>
+:root{--bg:#f6f4ff;--card:#ffffff;--text:#1d1b2e;--muted:#6b6880;--accent:#7c3aed;--accent2:#ec4899;--line:#e3dff5;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14121f;--card:#1e1b2e;--text:#f2f0ff;--muted:#a29fbb;--line:#33304a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14121f;--card:#1e1b2e;--text:#f2f0ff;--muted:#a29fbb;--line:#33304a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.card{width:100%;max-width:440px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 10px 40px rgba(124,58,237,.12)}
+.steps{display:flex;gap:8px;margin-bottom:20px}
+.dot{flex:1;height:6px;border-radius:99px;background:var(--line);transition:background .3s}
+.dot.on{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+h1{font-size:1.4rem;margin:0 0 8px}
+p{color:var(--muted);line-height:1.5;margin:0 0 18px}
+.btn{display:block;width:100%;text-align:center;text-decoration:none;border:0;cursor:pointer;font:inherit;font-weight:600;color:#fff;padding:14px 16px;border-radius:14px;background:linear-gradient(90deg,var(--accent),var(--accent2));margin-top:10px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.step{display:none}.step.show{display:block}
+#arena{position:relative;height:260px;border:2px dashed var(--line);border-radius:16px;overflow:hidden;margin-bottom:12px;touch-action:manipulation}
+#target{position:absolute;width:56px;height:56px;font-size:34px;line-height:1;border:0;border-radius:50%;background:transparent;cursor:pointer;transition:left .15s,top .15s}
+.score{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem}
+.big{font-size:3rem;text-align:center;margin-bottom:6px}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="steps"><div class="dot on" id="d1"></div><div class="dot" id="d2"></div><div class="dot" id="d3"></div></div>
+
+  <section class="step show" id="s1">
+    <h1>Step 1: Say thank you 💌</h1>
+    <p>Send me a “thank you” DM on Instagram. Tap the button, send the message, then come back here.</p>
+    <a class="btn" id="igBtn" href="https://www.instagram.com/catch__me__if__you__can__666?hvrq=bzhyd2VwYW55bWFu" target="_blank" rel="noopener">Open Instagram</a>
+    <button class="btn ghost" id="next1" disabled>I’ve sent it →</button>
+  </section>
+
+  <section class="step" id="s2">
+    <h1>Step 2: Catch the star ⭐</h1>
+    <p>Tap the star 5 times in 30 seconds. It jumps every time you catch it. If time runs out, just try again!</p>
+    <div id="arena"><button id="target" aria-label="Star">⭐</button></div>
+    <div class="score"><span>Caught: <b id="score">0</b> / 5</span><span>Time: <b id="time">30</b>s</span></div>
+  </section>
+
+  <section class="step" id="s3">
+    <div class="big">🎉</div>
+    <h1>Step 3: The final link</h1>
+    <p>You will get the link in the final step. Just kidding, to make you happy. Wow! You made it. 🥳</p>
+    <p id="count"></p>
+    <a class="btn" id="mainBtn" href="https://guitar-vacation-para-immigration.trycloudflare.com">Go to the main site now →</a>
+  </section>
+</main>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  function go(n){
+    ['s1','s2','s3'].forEach(function(s,i){$(s).classList.toggle('show',i===n-1)});
+    ['d1','d2','d3'].forEach(function(d,i){$(d).classList.toggle('on',i<n)});
+  }
+  // Step 1: enable continue a few seconds after opening Instagram
+  $('igBtn').addEventListener('click',function(){
+    var n=5,b=$('next1');
+    b.textContent='Wait '+n+'s…';
+    var t=setInterval(function(){
+      n--;
+      if(n<=0){clearInterval(t);b.disabled=false;b.textContent='I’ve sent it →'}
+      else b.textContent='Wait '+n+'s…';
+    },1000);
+  });
+  $('next1').addEventListener('click',function(){go(2);start()});
+  // Step 2: tap the star game
+  var GOAL=5,TIME=30,timer,score=0,arena=$('arena'),tg=$('target');
+  function start(){
+    clearInterval(timer);score=0;var t=TIME;
+    $('score').textContent=0;$('time').textContent=t;move();
+    timer=setInterval(function(){
+      t--;$('time').textContent=t;
+      if(t<=0){start()}
+    },1000);
+  }
+  function redirect(){
+    var n=5,c=$('count');
+    c.textContent='Taking you to the main site in '+n+'s…';
+    var r=setInterval(function(){
+      n--;
+      if(n<=0){clearInterval(r);window.location.href=$('mainBtn').href}
+      else c.textContent='Taking you to the main site in '+n+'s…';
+    },1000);
+  }
+  function move(){
+    var x=Math.random()*(arena.clientWidth-56),y=Math.random()*(arena.clientHeight-56);
+    tg.style.left=x+'px';tg.style.top=y+'px';
+  }
+  tg.addEventListener('click',function(){
+    score++;$('score').textContent=score;
+    if(score>=GOAL){clearInterval(timer);setTimeout(function(){go(3);redirect()},250)}else move();
+  });
+})();
+</script>
+</body>
+</html>
